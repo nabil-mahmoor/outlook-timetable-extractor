@@ -16,7 +16,7 @@ def save_cache(cache: msal.SerializableTokenCache) -> None:
         with open(TOKEN_CACHE_PATH, "w") as f:
             f.write(cache.serialize())
             
-def get_access_token():
+def get_access_token() -> msal.SerializableTokenCache:
     cache: msal.SerializableTokenCache = load_cache()
 
     app = msal.PublicClientApplication(client_id=APPLICATION_CLIENT_ID, authority=AUTHORITY, token_cache=cache)

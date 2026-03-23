@@ -4,7 +4,8 @@ load_dotenv()
 
 APPLICATION_CLIENT_ID = os.getenv("APPLICATION_CLIENT_ID")
 DIRECTORY_TENANT_ID = os.getenv("DIRECTORY_TENANT_ID")
-AUTHORITY = f"https://login.microsoftonline.com/{DIRECTORY_TENANT_ID}"
+GRAPH_BASE_URL = "https://graph.microsoft.com/v1.0"
+AUTHORITY = f"https://login.microsoftonline.com/consumers"
 
 # The permission scope we requested on Azure
 SCOPES = ["Mail.Read"]
