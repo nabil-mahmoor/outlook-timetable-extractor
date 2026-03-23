@@ -1,0 +1,18 @@
+token_cache.json
+.env
+.env.*
+
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# IDE
+.vscode
+.idea
