@@ -1,3 +1,4 @@
+output/
 token_cache.json
 .env
 .env.*

@@ -12,3 +12,6 @@ SCOPES = ["Mail.Read"]
 
 # Token cache file path
 TOKEN_CACHE_PATH = "token_cache.json"
+
+# Keywords to find in PDF
+KEYWORDS = ["Softwae Engineering", "Intake 41"]

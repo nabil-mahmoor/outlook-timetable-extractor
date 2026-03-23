@@ -1,5 +1,5 @@
 import requests
-from config import SCOPES, GRAPH_BASE_URL
+from config import GRAPH_BASE_URL
 
 def get_latest_timetable_email(token)-> dict | None:
     headers = {
@@ -49,7 +49,7 @@ def get_pdf_attachment(token, message_id):
         
     return None
 
-def download_pdf(attachment, timestamp=""):
+def download_pdf(attachment, timestamp="") -> str:
     import base64
     
     download_path = f"timetable{"_" + timestamp}.pdf"
@@ -60,3 +60,4 @@ def download_pdf(attachment, timestamp=""):
         f.write(pdf_data)
     
     print(f"PDF downloaded to {download_path}")
+    return download_path
