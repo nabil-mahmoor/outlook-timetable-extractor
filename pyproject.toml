@@ -1,7 +1,7 @@
 [project]
-name = "outlook-timetable"
+name = "outlook-timetable-extractor"
 version = "0.1.0"
-description = "Add your description here"
+description = "A Python automation script that queries your Outlook mailbox, finds the latest timetable email, extracts your specific batch's timetable page from the PDF attachment, and saves it as an image — automatically."
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
