@@ -3,8 +3,9 @@ from datetime import datetime
 from auth import get_access_token
 from pdf_handler import find_timetable_page, save_page_as_image
 from mail import get_latest_timetable_email, get_pdf_attachment, download_pdf
+from notifier import send_timetable
 
-def main():
+def run_pipeline():
     try:
         token = get_access_token()
         print("Access token aquired successfully")
@@ -29,15 +30,26 @@ def main():
                 if not page_index:
                     print("Could not find your timetable page. Check the file for spelling errors")
                 else:
-                    save_page_as_image(pdf_path, page_index, date_str)
+                    image_path = save_page_as_image(pdf_path, page_index, date_str)
                     
                     # Clean up the temporary PDF
                     os.remove(pdf_path)
                     print("Temporary PDF removed.")
+                    
+                    # Open the image automatically after saving
+                    os.startfile(image_path)
+                    
+                    # Send image to telegram
+                    send_timetable(image_path)
 
     except Exception as e:
         print(f"Something went wrong: {e}")
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        error = run_pipeline()
+        if error:
+            print(error)
+    except Exception as e:
+        print(f"Something went wrong: {e}")

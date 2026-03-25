@@ -4,6 +4,8 @@ load_dotenv()
 
 APPLICATION_CLIENT_ID = os.getenv("APPLICATION_CLIENT_ID")
 DIRECTORY_TENANT_ID = os.getenv("DIRECTORY_TENANT_ID")
+TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
+TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
 GRAPH_BASE_URL = "https://graph.microsoft.com/v1.0"
 AUTHORITY = f"https://login.microsoftonline.com/consumers"
 

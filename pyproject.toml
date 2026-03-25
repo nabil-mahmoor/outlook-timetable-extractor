@@ -8,5 +8,6 @@ dependencies = [
     "msal>=1.35.1",
     "pymupdf>=1.27.2.2",
     "python-dotenv>=1.2.2",
+    "python-telegram-bot>=22.7",
     "requests>=2.32.5",
 ]
