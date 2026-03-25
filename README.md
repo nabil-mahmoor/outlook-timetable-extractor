@@ -11,7 +11,9 @@ A Python automation script that queries your Outlook mailbox, finds the latest t
 3. Downloads the PDF attachment
 4. Scans each page for keywords unique to your batch and degree
 5. Renders that page as a dated PNG image
-6. Deletes the temporary PDF
+6. Opens it automatically on your PC
+7. Deletes the temporary PDF
+8. *(Optional)* Sends the image to your phone via Telegram
 
 ---
 
@@ -26,6 +28,7 @@ outlook-timetable-extractor/
 ├── pdf_handler.py          # PDF page detection and image rendering
 ├── config.py               # All constants and settings
 ├── main.py                 # Orchestrates the full workflow
+├── notifier.py             # (Optional) Telegram delivery
 ├── run.bat                 # Windows batch file for Task Scheduler
 ├── token_cache.json        # Auto-generated on first login, do not commit
 ├── .env                    # Secret credentials, do not commit
@@ -70,6 +73,8 @@ uv sync
 
 In your university Outlook (browser), go to **Settings → Mail → Forwarding** and forward all incoming mail to your personal Outlook/Hotmail address.
 
+> ⚠️ Forwarding only applies to emails received **after** it is enabled. To test before the next timetable email arrives, manually forward a previous timetable email to your personal mailbox.
+
 ### 4. Configure credentials
 
 Create a `.env` file in the project root:
@@ -103,8 +108,9 @@ On first run you will be prompted to authenticate via browser using the device c
 
 1. Update `run.bat` with the correct path to your project folder
 2. Open **Task Scheduler** and create a new basic task
-3. Set trigger to **Weekly** on **Thursday**, **Friday**, and **Saturday** at your preferred time
+3. Set trigger to **Weekly** on your preferred day and time
 4. Set action to run `run.bat`
+5. Under **Settings**, check **"Run task as soon as possible after a scheduled start is missed"** — this ensures the script runs on the next startup if your PC was off during the scheduled time
 
 ---
 
@@ -129,12 +135,91 @@ output/
 | `requests` | HTTP calls to Microsoft Graph API |
 | `pymupdf` | PDF parsing and image rendering |
 | `python-dotenv` | Loading credentials from `.env` |
+| `python-telegram-bot` | *(Optional)* Sending image to Telegram |
 
 ---
 
 ## Notes
 
 - `token_cache.json` is auto-created on first login and stores your refresh token. It is excluded from version control via `.gitignore`. Do not share it.
+- The refresh token is valid for 90 days. After expiry you will be prompted to log in once more via the device code flow.
 - The MuPDF warning `format error: No common ancestor in structure tree` is suppressed — it is a harmless quirk of how your university generates their PDFs and does not affect output.
 - If the script prints `No timetable email found`, the email likely hasn't been sent yet for the week or forwarding was set up after the email arrived. You can manually forward a previous timetable email to your personal mailbox to test.
 - The `$filter` and `$orderby` combination is not used in the Graph API query due to a known API limitation. Instead, up to 10 matching emails are fetched and sorted by date in Python.
+- This script is built specifically to align with the workflow of my university — the email structure, PDF format, and timetable layout may differ elsewhere. But the approach is fully adaptable.
+
+---
+
+## Optional: Telegram Delivery
+
+You can have the script send the timetable image directly to your phone via a Telegram bot.
+
+### 1. Install the library
+
+```bash
+uv add python-telegram-bot
+```
+
+### 2. Create a Telegram bot
+
+1. Open Telegram and search for **BotFather**
+2. Send `/newbot` and follow the prompts to name your bot
+3. BotFather will give you a **bot token** — copy it
+
+### 3. Get your chat ID
+
+1. Open a chat with your new bot and send it any message
+2. Open this URL in your browser (replace with your actual token):
+```
+https://api.telegram.org/bot<your-token>/getUpdates
+```
+3. Find the `"chat"` object in the JSON response and copy the `"id"` value
+
+### 4. Add credentials to `.env`
+
+```
+TELEGRAM_BOT_TOKEN=your-bot-token-here
+TELEGRAM_CHAT_ID=your-chat-id-here
+```
+
+### 5. Add to `config.py`
+
+```python
+TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
+TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
+```
+
+### 6. Create `notifier.py`
+
+```python
+import telegram
+import asyncio
+from pathlib import Path
+from config import TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID
+
+
+async def _send(image_path, image_name):
+    bot = telegram.Bot(token=TELEGRAM_BOT_TOKEN)
+    with open(image_path, "rb") as img:
+        await bot.send_photo(
+            chat_id=TELEGRAM_CHAT_ID,
+            photo=img,
+            caption=image_name
+        )
+
+
+def send_timetable(image_path):
+    asyncio.run(_send(image_path, Path(image_path).name))
+    print("Timetable is sent to Telegram bot: Timetable Extractor")
+```
+
+### 7. Update `main.py`
+
+Import and call `send_timetable()` after the image is saved:
+
+```python
+from notifier import send_timetable
+
+# After save_page_as_image()
+send_timetable(image_path)
+```
