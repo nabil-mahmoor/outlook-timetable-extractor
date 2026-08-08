@@ -1,7 +1,6 @@
 import msal
-import json
 import os
-from config import APPLICATION_CLIENT_ID, AUTHORITY, SCOPES, TOKEN_CACHE_PATH
+from src.config import APPLICATION_CLIENT_ID, AUTHORITY, SCOPES, TOKEN_CACHE_PATH
 
 def load_cache() -> msal.SerializableTokenCache:
     cache: msal.SerializableTokenCache = msal.SerializableTokenCache()

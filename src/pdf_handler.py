@@ -1,6 +1,6 @@
 import os
 import fitz
-from config import KEYWORDS
+from src.config import KEYWORDS
 fitz.TOOLS.mupdf_display_errors(False)
 
 def find_timetable_page(pdf_path) -> int | None:
