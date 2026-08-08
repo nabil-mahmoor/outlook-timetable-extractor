@@ -1,7 +1,7 @@
 import telegram
 import asyncio
 from pathlib import Path
-from src.config import TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID
+from config import TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID
 
 
 async def _send(image_path, image_name):

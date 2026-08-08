@@ -1,6 +1,6 @@
-import os
+from pathlib import Path
 import fitz
-from src.config import KEYWORDS
+from config import KEYWORDS
 fitz.TOOLS.mupdf_display_errors(False)
 
 def find_timetable_page(pdf_path) -> int | None:
@@ -17,15 +17,20 @@ def find_timetable_page(pdf_path) -> int | None:
             
     pdf.close()
     
-def save_page_as_image(pdf_path, page_index, date_str, output_folder="output"):
+def save_page_as_image(pdf_path, page_index, date_str, output_folder=Path("../output")):
     pdf = fitz.open(pdf_path)
     page = pdf.load_page(page_index)
 
     pix = page.get_pixmap(dpi=200)
 
-    os.makedirs(output_folder, exist_ok=True)
+    output_folder.mkdir(exist_ok=True)
+    
+    # Delete other images in output folder
+    for file in output_folder.iterdir():
+        if file.is_file():
+            file.unlink()
 
-    output_path = os.path.join(output_folder, f"timetable_{date_str}.png")
+    output_path = output_folder / f"timetable_{date_str}.png"
     pix.save(output_path)
     pdf.close()
 

@@ -1,9 +1,9 @@
 import os
 from datetime import datetime
-from src.auth import get_access_token
-from src.pdf_handler import find_timetable_page, save_page_as_image
-from src.mail import get_latest_timetable_email, get_pdf_attachment, download_pdf
-from src.notifier import send_timetable
+from auth import get_access_token
+from pdf_handler import find_timetable_page, save_page_as_image
+from mail import get_latest_timetable_email, get_pdf_attachment, download_pdf
+from notifier import send_timetable
 
 def run_pipeline():
     try:
@@ -44,3 +44,6 @@ def run_pipeline():
 
     except Exception as e:
         print(f"Something went wrong: {e}")
+
+if __name__ == "__main__":
+    run_pipeline()

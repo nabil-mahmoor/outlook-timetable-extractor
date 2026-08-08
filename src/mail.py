@@ -1,5 +1,5 @@
 import requests
-from src.config import GRAPH_BASE_URL
+from config import GRAPH_BASE_URL
 
 def get_latest_timetable_email(token)-> dict | None:
     headers = {
